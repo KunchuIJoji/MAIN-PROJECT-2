@@ -1,88 +1,67 @@
 import pandas as pd
+import numpy as np
 import os
 import pickle
 from uuid import uuid4
 import traceback
-# Prepared data in the format required by deployed model
-
 
 def transform_placed_prediction(df):
+    """
+    Extracts the correct columns into an array.
+    Uses row.get('branch') instead of row[4] to prevent KeyError on Web Forms.
+    """
     transformed_data = []
     placed = ['tier', 'cgpa', 'inter_gpa', 'ssc_gpa', 'internships', 'no_of_projects', 'is_participate_hackathon', 'is_participated_extracurricular',
-              'no_of_programming_languages', 'dsa', 'mobile_dev', 'web_dev', 'Machine Learning', 'cloud', 'CSE', 'ECE', 'IT', 'MECH']
+              'no_of_programming_languages', 'dsa', 'mobile_dev', 'web_dev', 'Machine Learning', 'cloud']
+              
     for index, row in df.iterrows():
         row_values = []
         for column in placed:
-            if(column != 'CSE' and column != 'IT' and column != 'MECH' and column != 'ECE'):
-                row_values.append(float(row[column]))
+            # Safely grab the column value, default to 0 if missing
+            row_values.append(float(row.get(column, 0)))
 
-        # Check the branch value and fill the corresponding columns
-        if row[4] == "CSE":
-            row_values.insert(14, 1)
-            row_values.insert(15, 0)
-            row_values.insert(16, 0)
-            row_values.insert(17, 0)
-        elif row[4] == 'ECE':
-            row_values.insert(14, 0)
-            row_values.insert(15, 1)
-            row_values.insert(16, 0)
-            row_values.insert(17, 0)
-        elif row[4] == 'IT':
-            row_values.insert(14, 0)
-            row_values.insert(15, 0)
-            row_values.insert(16, 1)
-            row_values.insert(17, 0)
-        elif row[4] == 'MECH':
-            row_values.insert(14, 0)
-            row_values.insert(15, 0)
-            row_values.insert(16, 0)
-            row_values.insert(17, 1)
+        # Check branch by name instead of brittle index
+        branch = row.get('branch', 'CSE')
+        if branch == "CSE":
+            row_values.extend([1, 0, 0, 0])
+        elif branch == 'ECE':
+            row_values.extend([0, 1, 0, 0])
+        elif branch == 'IT':
+            row_values.extend([0, 0, 1, 0])
+        elif branch == 'MECH':
+            row_values.extend([0, 0, 0, 1])
         else:
-            row_values.insert(14, 0)
-            row_values.insert(15, 0)
-            row_values.insert(16, 0)
-            row_values.insert(17, 0)
+            row_values.extend([0, 0, 0, 0])
+            
         transformed_data.append(row_values)
     return transformed_data
 
 
-# Prepared data in the format required by deployed model
 def transform_salary_prediction(df):
+    """
+    Extracts the correct columns for salary prediction.
+    """
     transformed_data = []
     salary = ['tier', 'cgpa', 'internships', 'no_of_projects', 'is_participate_hackathon', 'is_participated_extracurricular',
-              'no_of_programming_languages', 'dsa', 'mobile_dev', 'web_dev', 'Machine Learning', 'cloud', 'CSE', 'ECE', 'IT', 'MECH']
+              'no_of_programming_languages', 'dsa', 'mobile_dev', 'web_dev', 'Machine Learning', 'cloud']
+              
     for index, row in df.iterrows():
         row_values = []
         for column in salary:
-            if(column != 'CSE' and column != 'IT' and column != 'MECH' and column != 'ECE'):
-                row_values.append(float(row[column]))
+            row_values.append(float(row.get(column, 0)))
 
-        # Check the branch value and fill the corresponding columns
-        if row[4] == "CSE":
-            row_values.insert(14, 1)
-            row_values.insert(15, 0)
-            row_values.insert(16, 0)
-            row_values.insert(17, 0)
-        elif row[4] == 'ECE':
-            row_values.insert(14, 0)
-            row_values.insert(15, 1)
-            row_values.insert(16, 0)
-            row_values.insert(17, 0)
-        elif row[4] == 'IT':
-            row_values.insert(14, 0)
-            row_values.insert(15, 0)
-            row_values.insert(16, 1)
-            row_values.insert(17, 0)
-        elif row[4] == 'MECH':
-            row_values.insert(14, 0)
-            row_values.insert(15, 0)
-            row_values.insert(16, 0)
-            row_values.insert(17, 1)
+        branch = row.get('branch', 'CSE')
+        if branch == "CSE":
+            row_values.extend([1, 0, 0, 0])
+        elif branch == 'ECE':
+            row_values.extend([0, 1, 0, 0])
+        elif branch == 'IT':
+            row_values.extend([0, 0, 1, 0])
+        elif branch == 'MECH':
+            row_values.extend([0, 0, 0, 1])
         else:
-            row_values.insert(14, 0)
-            row_values.insert(15, 0)
-            row_values.insert(16, 0)
-            row_values.insert(17, 0)
+            row_values.extend([0, 0, 0, 0])
+            
         transformed_data.append(row_values)
     return transformed_data
 
@@ -132,11 +111,9 @@ def deleteTempFiles():
 
 
 def convert_is_placed_to_zero_ifnot_placed(is_placed, salary):
-
     for i in range(len(is_placed)):
         if is_placed[i] == 0:
             salary[i] = 0
-
     return salary
 
 

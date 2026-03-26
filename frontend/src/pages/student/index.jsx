@@ -76,7 +76,7 @@ export const Student = () => {
 
     const [snackBarOptions, setsnackBarOptions] = useState({
         msg: '',
-        severity: '',
+        severity: 'info', 
     });
     const handleOpenSnackBar = (msg, severity) => {
         setopenSnackBar(true);
@@ -434,9 +434,6 @@ export const Student = () => {
                             </motion.div>
                         )}
                     </div>
-                    <h1 style={{ textAlign: 'center', fontSize: '45px' }}>
-                        OR
-                    </h1>
                     <div className={styles.form}>
                         <div className={styles.grid}>
                             <div className={styles.grid_item}>
@@ -509,7 +506,7 @@ export const Student = () => {
                             <div className={styles.grid_item}>
                                 <TextField
                                     sx={{
-                                        ...formstyles,
+                                        
                                     }}
                                     onChange={(e) =>
                                         setformDetails((prev) => ({
@@ -772,7 +769,7 @@ export const Student = () => {
                                     ''
                                 )}
                                 <div>
-                                    <h2 style={{ fontWeight: 200 }}>
+                                    <h1 style={{ fontWeight: 200 }}>
                                         <GiMedallist /> Chances Of Getting
                                         Placed:{' '}
                                         <span style={{ color: '#9d44c0' }}>
@@ -780,12 +777,6 @@ export const Student = () => {
                                                 predictedData.placement_probability
                                             }
                                             %
-                                        </span>
-                                    </h2>
-                                    <h1>
-                                        <TfiHandPointRight /> Predicted Salary:{' '}
-                                        <span style={{ color: '#9d44c0' }}>
-                                            {predictedData.predicted_salary}LPA
                                         </span>
                                     </h1>
                                     <div>

@@ -7,16 +7,13 @@ def _prepare_data(feature_values):
     Safely unwraps Pandas DataFrames, Numpy Arrays, or nested lists
     into a clean 2D list so the loop runs exactly once per student.
     """
-    # If it's a Pandas DataFrame, get the raw array
     if hasattr(feature_values, 'values'):
         arr = feature_values.values
     else:
         arr = np.array(feature_values)
         
-    # If it's wrapped in an extra outer array like [[[...], [...]]]
     if arr.ndim == 3 and arr.shape[0] == 1:
         arr = arr[0]
-    # If it's a single student (1D array), make it 2D so the loop works
     elif arr.ndim == 1:
         arr = arr.reshape(1, -1)
         
@@ -31,7 +28,6 @@ def predict_isplaced_api(feature_values):
         predictions = []
         probabilities = []
 
-        # Loop through every student in the batch
         for data in data_rows:
             tier = float(data[0])
             cgpa = float(data[1])
@@ -64,7 +60,6 @@ def predict_isplaced_api(feature_values):
 
     except Exception as e:
         print(f"Fallback used due to error in placement logic: {e}")
-        # If it fails, generate an array of 1s matching the exact number of students
         length = len(data_rows) if 'data_rows' in locals() else len(feature_values)
         return [1] * length, ["88.5"] * length
 
@@ -77,13 +72,13 @@ def predict_salary_api(feature_values):
         data_rows = _prepare_data(feature_values)
         salaries = []
 
-        # Loop through every student in the batch
         for data in data_rows:
             tier = float(data[0])
             cgpa = float(data[1])
-            internships = float(data[4])
-            projects = float(data[5])
-            hackathon = float(data[6])
+            # UPDATED: Correct indices mapped specifically for the Salary array
+            internships = float(data[2]) 
+            projects = float(data[3])
+            hackathon = float(data[4])
 
             base_salary = 3.5
 

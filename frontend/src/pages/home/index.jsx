@@ -36,7 +36,7 @@ export const Home = () => {
                     }}
                     className={styles.title}
                 >
-                    PlacemenTrack
+                    PlaceMate
                 </h1>
                 <h1
                     style={{
